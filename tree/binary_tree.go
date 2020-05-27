@@ -60,13 +60,63 @@ type stack interface {
 	Pop() interface{}
 	Push(interface{})
 }
+
 // 非递归遍历 前序
-func (tn *treeNode) noRecursiveTraversal(s stack) {
+func (tn *treeNode) noRecursivePreOrderTraversal(s stack) {
 	s.Push(tn)
 	for {
 		node := s.Pop().(*treeNode)
 		doForEachNode(node)
 		s.Push(node.right)
 		s.Push(node.left)
+	}
+}
+
+// 非递归遍历 中序
+func (tn *treeNode) noRecursiveMiddleOrderTraversal(s stack) {
+	node := tn
+	for {
+		for node.left != nil {
+			s.Push(node)
+			node = node.left
+		}
+
+		Right:
+		doForEachNode(node)
+		if node.right != nil {
+			node = node.right
+		} else {
+			popValue := s.Pop()
+			if popValue != nil {
+				node = popValue.(*treeNode)
+				goto Right
+			}
+
+			// stack is empty, end for
+			break
+		}
+	}
+}
+
+// 非递归遍历 后序
+func (tn *treeNode) noRecursivePostOrderTraversal(s stack) {
+	node := tn
+	s.Push(node)
+	for {
+		if node.right != nil {
+			s.Push(node.right)
+		}
+		if node.left != nil {
+			s.Push(node.left)
+		}
+
+		popValue := s.Pop()
+		if popValue != nil {
+			node = popValue.(*treeNode)
+			doForEachNode(node)
+		} else {
+			// stack is empty, then end
+			break
+		}
 	}
 }
