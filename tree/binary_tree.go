@@ -22,11 +22,12 @@ func setTreeNodeHandler(f EachNodeHandler) {
 
 // 递归遍历 前序遍历
 func (tn *treeNode) recursiveTraversal() {
+	doForEachNode(tn)
+
 	if tn.left == nil && tn.right == nil {
 		return
 	}
 
-	doForEachNode(tn)
 	if tn.left != nil {
 		tn.left.recursiveTraversal()
 	}
@@ -65,10 +66,18 @@ type stack interface {
 func (tn *treeNode) noRecursivePreOrderTraversal(s stack) {
 	s.Push(tn)
 	for {
-		node := s.Pop().(*treeNode)
+		popValue := s.Pop()
+		if popValue == nil {
+			break
+		}
+		node := popValue.(*treeNode)
 		doForEachNode(node)
-		s.Push(node.right)
-		s.Push(node.left)
+		if node.right != nil {
+			s.Push(node.right)
+		}
+		if node.left != nil {
+			s.Push(node.left)
+		}
 	}
 }
 
@@ -81,7 +90,7 @@ func (tn *treeNode) noRecursiveMiddleOrderTraversal(s stack) {
 			node = node.left
 		}
 
-		Right:
+	Right:
 		doForEachNode(node)
 		if node.right != nil {
 			node = node.right
@@ -100,23 +109,45 @@ func (tn *treeNode) noRecursiveMiddleOrderTraversal(s stack) {
 
 // 非递归遍历 后序
 func (tn *treeNode) noRecursivePostOrderTraversal(s stack) {
+	traversalMap := make(map[*treeNode]uint8)
 	node := tn
 	s.Push(node)
 	for {
-		if node.right != nil {
-			s.Push(node.right)
-		}
-		if node.left != nil {
-			s.Push(node.left)
-		}
-
 		popValue := s.Pop()
 		if popValue != nil {
 			node = popValue.(*treeNode)
-			doForEachNode(node)
+			if !checkNodeTraversal(traversalMap, node) {
+				setNodeHasTraversal(traversalMap, node)
+				s.Push(node)
+				if node.right != nil || node.left != nil {
+					if node.right != nil {
+						s.Push(node.right)
+					}
+					if node.left != nil {
+						s.Push(node.left)
+					}
+					continue
+				}
+			} else {
+				doForEachNode(node)
+			}
 		} else {
 			// stack is empty, then end
 			break
 		}
 	}
+}
+
+func checkNodeTraversal(m map[*treeNode]uint8, node *treeNode) bool {
+	if v, ok := m[node]; ok {
+		if v == 1 {
+			return true
+		}
+	}
+
+	return false
+}
+
+func setNodeHasTraversal(m map[*treeNode]uint8, node *treeNode) {
+	m[node] = 1
 }
