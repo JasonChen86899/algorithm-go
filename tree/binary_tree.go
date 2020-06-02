@@ -42,6 +42,7 @@ func (tn *treeNode) levelTraversal(queue chan *treeNode) {
 	for {
 		select {
 		case popNode := <-queue:
+			doForEachNode(popNode)
 			if popNode.left != nil {
 				queue <- popNode.left
 			}

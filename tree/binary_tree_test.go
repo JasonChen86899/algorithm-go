@@ -81,3 +81,14 @@ func TestBinaryTreeNotRecursiveTraversal(t *testing.T) {
 	fmt.Println("-----------------------------")
 	binaryTree.root.noRecursivePostOrderTraversal(testStack)
 }
+
+func TestBinaryTreeLevelTraversal(t *testing.T) {
+	binaryTree := initBinaryTree()
+	queue := make(chan *treeNode, 8)
+	binaryTree.root.levelTraversal(queue)
+}
+
+func TestBinaryTreeHeight(t *testing.T) {
+	binaryTree := initBinaryTree()
+	fmt.Println(binaryTree.root.treeHeight())
+}
