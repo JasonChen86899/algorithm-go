@@ -61,6 +61,7 @@ func (tn *treeNode) levelTraversal(queue chan *treeNode) {
 type stack interface {
 	Pop() interface{}
 	Push(interface{})
+	Fetch() interface{}
 }
 
 // 非递归遍历 前序
@@ -151,4 +152,30 @@ func checkNodeTraversal(m map[*treeNode]uint8, node *treeNode) bool {
 
 func setNodeHasTraversal(m map[*treeNode]uint8, node *treeNode) {
 	m[node] = 1
+}
+
+// 后序遍历 非递归 改进版本
+func (tn *treeNode) noRecursivePostOrderTraversal2(s stack) {
+	s.Push(tn)
+
+	traversalMap := make(map[*treeNode]uint8)
+	for v:= s.Fetch(); v != nil; v = s.Fetch() {
+		node := v.(*treeNode)
+
+		leftNode := node.left
+		rightNode := node.right
+		if leftNode != nil && !checkNodeTraversal(traversalMap, leftNode) {
+			s.Push(leftNode)
+			continue
+		}
+
+		if rightNode != nil && !checkNodeTraversal(traversalMap, rightNode){
+			s.Push(rightNode)
+			continue
+		}
+
+		popNode := s.Pop().(*treeNode)
+		doForEachNode(popNode)
+		setNodeHasTraversal(traversalMap, popNode)
+	}
 }

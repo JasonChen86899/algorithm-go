@@ -72,6 +72,14 @@ func (s *testStack) Pop() interface{} {
 	return nil
 }
 
+func (s *testStack) Fetch() interface{} {
+	if len(s.innerArray) > 0 {
+		return s.innerArray[len(s.innerArray)-1]
+	}
+
+	return nil
+}
+
 func TestBinaryTreeNotRecursiveTraversal(t *testing.T) {
 	binaryTree := initBinaryTree()
 	testStack := NewTestStack(1024)
@@ -80,6 +88,8 @@ func TestBinaryTreeNotRecursiveTraversal(t *testing.T) {
 	binaryTree.root.noRecursiveMiddleOrderTraversal(testStack)
 	fmt.Println("-----------------------------")
 	binaryTree.root.noRecursivePostOrderTraversal(testStack)
+	fmt.Println("-----------------------------")
+	binaryTree.root.noRecursivePostOrderTraversal2(testStack)
 }
 
 func TestBinaryTreeLevelTraversal(t *testing.T) {
