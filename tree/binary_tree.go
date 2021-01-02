@@ -59,20 +59,25 @@ func (tn *treeNode) levelTraversal(queue chan *treeNode) {
 
 // 非递归遍历 采用堆栈进行
 type stack interface {
-	Pop() interface{}
-	Push(interface{})
-	Fetch() interface{}
+	Pop() *treeNode
+	Push(node *treeNode)
+	Fetch() *treeNode
 }
 
 // 非递归遍历 前序
 func (tn *treeNode) noRecursivePreOrderTraversal(s stack) {
-	s.Push(tn)
+	if tn == nil {
+		return
+	}
+
+	node := tn
+	s.Push(node)
 	for {
 		popValue := s.Pop()
 		if popValue == nil {
 			break
 		}
-		node := popValue.(*treeNode)
+		node := popValue
 		doForEachNode(node)
 		if node.right != nil {
 			s.Push(node.right)
@@ -85,6 +90,10 @@ func (tn *treeNode) noRecursivePreOrderTraversal(s stack) {
 
 // 非递归遍历 中序
 func (tn *treeNode) noRecursiveMiddleOrderTraversal(s stack) {
+	if tn == nil {
+		return
+	}
+
 	node := tn
 	for {
 		for node.left != nil {
@@ -99,11 +108,11 @@ func (tn *treeNode) noRecursiveMiddleOrderTraversal(s stack) {
 		} else {
 			popValue := s.Pop()
 			if popValue != nil {
-				node = popValue.(*treeNode)
+				node = popValue
 				goto Right
 			}
 
-			// stack is empty, end for
+			// stack is empty, end loop
 			break
 		}
 	}
@@ -111,13 +120,17 @@ func (tn *treeNode) noRecursiveMiddleOrderTraversal(s stack) {
 
 // 非递归遍历 后序
 func (tn *treeNode) noRecursivePostOrderTraversal(s stack) {
+	if tn == nil {
+		return
+	}
+
 	traversalMap := make(map[*treeNode]uint8)
 	node := tn
 	s.Push(node)
 	for {
 		popValue := s.Pop()
 		if popValue != nil {
-			node = popValue.(*treeNode)
+			node = popValue
 			if !checkNodeTraversal(traversalMap, node) {
 				setNodeHasTraversal(traversalMap, node)
 				s.Push(node)
@@ -155,12 +168,17 @@ func setNodeHasTraversal(m map[*treeNode]uint8, node *treeNode) {
 }
 
 // 后序遍历 非递归 改进版本
-func (tn *treeNode) noRecursivePostOrderTraversal2(s stack) {
-	s.Push(tn)
+func (tn *treeNode) noRecursivePostOrderTraversalV2(s stack) {
+	if tn == nil {
+		return
+	}
+
+	node := tn
+	s.Push(node)
 
 	traversalMap := make(map[*treeNode]uint8)
-	for v:= s.Fetch(); v != nil; v = s.Fetch() {
-		node := v.(*treeNode)
+	for v := s.Fetch(); v != nil; v = s.Fetch() {
+		node := v
 
 		leftNode := node.left
 		rightNode := node.right
@@ -169,13 +187,43 @@ func (tn *treeNode) noRecursivePostOrderTraversal2(s stack) {
 			continue
 		}
 
-		if rightNode != nil && !checkNodeTraversal(traversalMap, rightNode){
+		if rightNode != nil && !checkNodeTraversal(traversalMap, rightNode) {
 			s.Push(rightNode)
 			continue
 		}
 
-		popNode := s.Pop().(*treeNode)
+		popNode := s.Pop()
 		doForEachNode(popNode)
 		setNodeHasTraversal(traversalMap, popNode)
+	}
+}
+
+// 非递归遍历 中序 改进版本
+func (tn *treeNode) noRecursiveMiddleOrderTraversalV2(s stack) {
+	if tn == nil {
+		return
+	}
+
+	node := tn
+
+	for {
+		if node != nil {
+			s.Push(node)
+			node = node.left
+		} else {
+			node = s.Pop()
+			if node == nil {
+				// empty
+				break
+			}
+			doForEachNode(node)
+
+			if node.right != nil {
+				node = node.right
+			} else {
+				// no right, for next pop
+				node = nil
+			}
+		}
 	}
 }

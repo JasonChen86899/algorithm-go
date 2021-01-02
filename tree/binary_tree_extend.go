@@ -3,6 +3,10 @@ package tree
 // 二叉树的高度 根据递归方法 稍作修改而来
 // 递归函数返回
 func (tn *treeNode) treeHeight() uint64 {
+	if tn == nil {
+		return 0
+	}
+
 	if tn.left == nil && tn.right == nil {
 		return 1
 	} else {
@@ -23,5 +27,3 @@ func (tn *treeNode) treeHeight() uint64 {
 		return tn.left.treeHeight() + 1 //tn.right == nil
 	}
 }
-
-

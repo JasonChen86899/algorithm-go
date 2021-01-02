@@ -51,18 +51,18 @@ func TestBinaryTreeRecursiveTraversal(T *testing.T) {
 }
 
 type testStack struct {
-	innerArray []interface{}
+	innerArray []*treeNode
 }
 
 func NewTestStack(size uint64) *testStack {
-	return &testStack{innerArray: make([]interface{}, 0, size)}
+	return &testStack{innerArray: make([]*treeNode, 0, size)}
 }
 
-func (s *testStack) Push(item interface{}) {
+func (s *testStack) Push(item *treeNode) {
 	s.innerArray = append(s.innerArray, item)
 }
 
-func (s *testStack) Pop() interface{} {
+func (s *testStack) Pop() *treeNode {
 	if len(s.innerArray) > 0 {
 		item := s.innerArray[len(s.innerArray)-1]
 		s.innerArray = s.innerArray[:len(s.innerArray)-1]
@@ -72,7 +72,7 @@ func (s *testStack) Pop() interface{} {
 	return nil
 }
 
-func (s *testStack) Fetch() interface{} {
+func (s *testStack) Fetch() *treeNode {
 	if len(s.innerArray) > 0 {
 		return s.innerArray[len(s.innerArray)-1]
 	}
@@ -87,9 +87,11 @@ func TestBinaryTreeNotRecursiveTraversal(t *testing.T) {
 	fmt.Println("-----------------------------")
 	binaryTree.root.noRecursiveMiddleOrderTraversal(testStack)
 	fmt.Println("-----------------------------")
+	binaryTree.root.noRecursiveMiddleOrderTraversalV2(testStack)
+	fmt.Println("-----------------------------")
 	binaryTree.root.noRecursivePostOrderTraversal(testStack)
 	fmt.Println("-----------------------------")
-	binaryTree.root.noRecursivePostOrderTraversal2(testStack)
+	binaryTree.root.noRecursivePostOrderTraversalV2(testStack)
 }
 
 func TestBinaryTreeLevelTraversal(t *testing.T) {
