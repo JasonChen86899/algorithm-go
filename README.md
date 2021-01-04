@@ -1,5 +1,6 @@
 # Algorithm-Go
 
+## Data structure
 * List  
 no-safe ring list    
 safe lock free ring list, just like native go channel, but not block and return err
@@ -8,3 +9,6 @@ binary tree no recursive traversal
 binary tree height
 * Graph  
 disJoin set
+
+## Additional notes  
+continuous update
